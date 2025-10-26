@@ -1,0 +1,192 @@
+/* src/index.css */
+
+/* --- Global Styles & Variables --- */
+:root {
+  --primary-color: #0a66c2; /* LinkedIn Blue */
+  --background-color: #f0f2f5; /* Light grey background */
+  --white-color: #ffffff;
+  --dark-grey-color: #666666;
+  --light-grey-color: #e0e0e0;
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+/* --- Navbar Styles --- */
+.navbar {
+  background-color: var(--white-color);
+  padding: 0.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--card-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-logo a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-links a,
+.navbar-links button {
+  color: var(--dark-grey-color);
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-links a:hover,
+.navbar-links button:hover {
+  color: var(--primary-color);
+}
+
+.navbar-user span {
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+/* --- Form Styles (Login & Register) --- */
+.form-container {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2.5rem;
+  background: var(--white-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  text-align: center;
+}
+
+.form-container h2 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--light-grey-color);
+  border-radius: 4px;
+  box-sizing: border-box; /* Important for width calculation */
+  font-size: 1rem;
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 20px;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.auth-form button:hover {
+  background-color: #004182; /* Darker blue */
+}
+
+/* --- Home Page: Create Post & Feed --- */
+.create-post-form {
+  background: var(--white-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+}
+
+.create-post-form textarea {
+  width: 100%;
+  border: 1px solid var(--light-grey-color);
+  border-radius: 4px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical; /* Allow user to resize vertically */
+  box-sizing: border-box;
+}
+
+.create-post-form button {
+  display: block;
+  margin-left: auto;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 20px;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.create-post-form button:hover {
+  background-color: #004182;
+}
+
+/* --- Individual Post Styles --- */
+.post {
+  background: var(--white-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* You can add a default profile icon later */
+/* .post-avatar { ... } */
+
+.post-author-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-author {
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+}
+
+.post-time {
+  font-size: 0.8rem;
+  color: var(--dark-grey-color);
+}
+
+.post-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: pre-wrap; /* Preserves line breaks from textarea */
+}
