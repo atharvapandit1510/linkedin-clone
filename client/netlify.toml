@@ -1,0 +1,10 @@
+# This tells Netlify how to build your React app
+[build]
+  # This is the folder Netlify will publish
+  publish = "build"
+
+# This is the fix for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
