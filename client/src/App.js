@@ -8,19 +8,23 @@ import ProfilePage from './pages/ProfilePage'; // Import ProfilePage
 import setAuthToken from './utils/setAuthToken';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000'; 
+// This is your DEPLOYED backend URL.
+// For local testing, use: 'http://localhost:5000'
+const API_URL = 'http://localhost:5000'; // <-- CHANGE THIS LATER
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // <-- THE NEW LOADING STATE
 
+  // Check for token and load user
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem('token');
       if (token) {
         setAuthToken(token);
         try {
+          // Get user data
           const res = await axios.get(`${API_URL}/api/auth`);
           setUser(res.data);
           setIsAuthenticated(true);
@@ -29,11 +33,12 @@ function App() {
           localStorage.removeItem('token');
         }
       }
-      setLoading(false);
+      setLoading(false); // <-- Set loading to false AFTER auth check is done
     };
     loadUser();
   }, []);
 
+  // Simple logout
   const logout = () => {
     localStorage.removeItem('token');
     setAuthToken(null);
@@ -41,15 +46,17 @@ function App() {
     setUser(null);
   };
 
+  // --- THIS IS THE FIX ---
+  // Show a loading spinner for the whole app until the user is loaded.
+  // This guarantees 'user' is correctly set before any page renders.
   if (loading) {
-    return <div style={{ textAlign: 'center', marginTop: '5rem', fontSize: '1.5rem' }}>Loading Application...</div>;
+    return <div className="feed-loading">Loading Application...</div>;
   }
 
   return (
     <Router>
-      {/* Pass user to Navbar for search and profile link */}
       <Navbar user={user} logout={logout} />
-      <div className="container">
+      <div className="container" style={{ padding: '0px' }}> {/* Removed padding to allow full-width components */}
         <Routes>
           <Route 
             path="/" 
@@ -61,27 +68,35 @@ function App() {
               )
             } 
           />
-          {/* --- ADD THIS ROUTE --- */}
           <Route 
             path="/profile/:userId"
             element={
               isAuthenticated ? (
-                // Pass the logged-in user as 'currentUser'
                 <ProfilePage apiUrl={API_URL} currentUser={user} />
               ) : (
                 <Navigate to="/login" />
               )
             }
           />
-          {/* --- END ROUTE --- */}
-
           <Route 
             path="/login" 
-            element={!isAuthenticated ? <LoginPage apiUrl={API_URL} setIsAuthenticated={setIsAuthenticated} setUser={setUser} /> : <Navigate to="/" />} 
+            element={
+              !isAuthenticated ? (
+                <LoginPage apiUrl={API_URL} setIsAuthenticated={setIsAuthenticated} setUser={setUser} />
+              ) : (
+                <Navigate to="/" />
+              )
+            } 
           />
           <Route 
             path="/register" 
-            element={!isAuthenticated ? <RegisterPage apiUrl={API_URL} setIsAuthenticated={setIsAuthenticated} setUser={setUser} /> : <Navigate to="/" />} 
+            element={
+              !isAuthenticated ? (
+                <RegisterPage apiUrl={API_URL} setIsAuthenticated={setIsAuthenticated} setUser={setUser} />
+              ) : (
+                <Navigate to="/" />
+              )
+            } 
           />
         </Routes>
       </div>

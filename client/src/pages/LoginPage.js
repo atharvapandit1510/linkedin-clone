@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import setAuthToken from '../utils/setAuthToken';
 
-// Get setUser to update the user in App.js state on login
 const LoginPage = ({ apiUrl, setIsAuthenticated, setUser }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
@@ -17,9 +16,8 @@ const LoginPage = ({ apiUrl, setIsAuthenticated, setUser }) => {
       localStorage.setItem('token', res.data.token);
       setAuthToken(res.data.token);
 
-      // After logging in, get the user data
       const userRes = await axios.get(`${apiUrl}/api/auth`);
-      setUser(userRes.data); // Set user in App.js
+      setUser(userRes.data); 
       
       setIsAuthenticated(true);
       navigate('/');
@@ -30,15 +28,23 @@ const LoginPage = ({ apiUrl, setIsAuthenticated, setUser }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
-      <form onSubmit={onSubmit} className="auth-form">
-        <input type="email" name="email" placeholder="Email" onChange={onChange} required />
-        <input type="password" name="password" placeholder="Password" onChange={onChange} required />
-        <button type="submit">Login</button>
-      </form>
+    // This is the new wrapper
+    <div className="auth-page-container"> 
+      <div className="form-container">
+        <h2>Login</h2>
+        <form onSubmit={onSubmit} className="auth-form">
+          <input type="email" name="email" placeholder="Email" onChange={onChange} required />
+          <input type="password" name="password" placeholder="Password" onChange={onChange} required />
+          <button type="submit">Login</button>
+        </form>
+        {/* New "switch to register" link */}
+        <p className="auth-switch-link">
+          New to LinkedIn? <Link to="/register">Join now</Link>
+        </p>
+      </div>
     </div>
   );
 };
 
 export default LoginPage;
+

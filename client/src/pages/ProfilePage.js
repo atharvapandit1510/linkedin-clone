@@ -1,66 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Avatar from '../components/Avatar';
-import Feed from '../components/Feed'; // Import our new Feed
+import Feed from '../components/Feed';
 
-// We get 'currentUser' to see if we're viewing our own profile
+// This is also a "SMART" component that fetches data.
 const ProfilePage = ({ apiUrl, currentUser }) => {
   const [profileUser, setProfileUser] = useState(null);
+  const [posts, setPosts] = useState([]); // State for this page's posts
   const [loading, setLoading] = useState(true);
-  const { userId } = useParams(); // Get the user ID from the URL
+  
+  const { userId } = useParams();
+  const isOwnProfile = profileUser && currentUser && profileUser._id === currentUser._id;
 
+  // Function to fetch profile and posts
+  const fetchProfileData = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Fetch profile user
+      const profileRes = await axios.get(`${apiUrl}/api/auth/${userId}`);
+      setProfileUser(profileRes.data);
+      
+      // Fetch this user's posts
+      const postsRes = await axios.get(`${apiUrl}/api/posts/user/${userId}`);
+      setPosts(postsRes.data);
+      
+    } catch (err) {
+      console.error('Error fetching profile data', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, apiUrl]);
+
+  // Fetch data on mount
   useEffect(() => {
-    const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        // Fetch the user's profile data
-        const res = await axios.get(`${apiUrl}/api/auth/${userId}`);
-        setProfileUser(res.data);
-      } catch (err) {
-        console.error('Error fetching profile', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchProfileData();
+  }, [fetchProfileData]);
 
-    fetchProfile();
-  }, [userId, apiUrl]); // Re-fetch if the userId or apiUrl changes
-
-  if (loading) {
-    return <div className="card" style={{ textAlign: 'center' }}>Loading profile...</div>;
+  if (loading || !profileUser) {
+    return <div className="profile-loading">Loading...</div>;
   }
-
-  if (!profileUser) {
-    return <div className="card" style={{ textAlign: 'center' }}>User not found.</div>;
-  }
-
-  // Check if the logged-in user is viewing their own profile
-  const isOwnProfile = currentUser._id === profileUser._id;
 
   return (
-    <div className="profile-page">
-      <div className="card profile-page-header">
-        <Avatar name={profileUser.name} className="profile-avatar" />
-        <div className="profile-info">
-          <h1>{profileUser.name}</h1>
-          <p>{profileUser.email}</p>
-          {isOwnProfile && (
-            <button className="edit-profile-btn">(Edit Profile - TODO)</button>
-          )}
+    <div className="profile-container">
+      <div className="profile-card">
+        <Avatar src={profileUser.avatar} name={profileUser.name} className="profile-avatar" />
+        <div className="profile-details">
+          <h2>{profileUser.name}</h2>
+          <p>{profileUser.headline}</p> {/* Make sure your model has 'headline' or remove this */}
+          <span>{profileUser.email}</span>
+          {isOwnProfile && <button className="profile-edit-btn">Edit Profile</button>}
         </div>
       </div>
-      
-      {/* This is the magic!
-        We reuse the Feed component to show ONLY this user's posts.
-      */}
-      <Feed
-        apiUrl={apiUrl}
-        user={currentUser}
-        fetchUrl={`${apiUrl}/api/posts/user/${profileUser._id}`}
-      />
+      <div className="profile-feed">
+        <Feed
+          apiUrl={apiUrl}
+          user={currentUser} // 'user' prop for Feed is the *logged in* user
+          posts={posts}       // Pass down the posts
+          setPosts={setPosts}   // Pass down the setter function
+          loading={loading}   // Pass down loading state
+        />
+      </div>
     </div>
   );
 };
 
 export default ProfilePage;
+

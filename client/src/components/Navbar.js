@@ -7,51 +7,55 @@ const Navbar = ({ user, logout }) => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // TODO: Implement search logic
-    // 1. Create a /search?q=... page
-    // 2. Navigate to it: navigate(`/search?q=${search}`)
-    // 3. That page will call a new API endpoint: /api/search?q=...
+    // Implement search logic (e.g., navigate to /search?q=...)
     console.log('Search submitted:', search);
     setSearch('');
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-left">
-        <div className="navbar-logo">
-          {/* Link logo to home */}
-          <Link to="/">L</Link> 
-        </div>
-        {/* --- ADD SEARCH BAR --- */}
-        {user && (
-          <form className="search-bar" onSubmit={handleSearchSubmit}>
-            <input
-              type="text"
-              placeholder="Search users..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </form>
-        )}
-        {/* --- END SEARCH BAR --- */}
+    <nav className="navbar" id="navbar">
+      <div className="navbar__left">
+        <Link to="/" className="navbar__logo" id="logo">
+          <strong>LinkedIn</strong>
+        </Link>
       </div>
 
-      <div className="navbar-links">
+      {user && (
+        <div className="navbar__search">
+          <form onSubmit={handleSearchSubmit} className="search-form" id="searchForm">
+            <input
+              type="text"
+              className="search-input"
+              id="searchInput"
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              autoComplete="off"
+            />
+            <button type="submit" className="search-button" id="searchBtn" aria-label="Search">
+              🔍
+            </button>
+          </form>
+        </div>
+      )}
+
+      <div className="navbar__right">
         {user ? (
           <>
-            {/* Link avatar/name to profile */}
-            <Link to={`/profile/${user._id}`} className="navbar-user-link">
-              <div className="navbar-user">
-                <Avatar name={user.name} />
-                <span>{user.name}</span>
-              </div>
+            <Link to={`/profile/${user._id}`} className="navbar__profile" id="profileLink">
+              
+              {/* --- THIS IS THE FIX --- */}
+              {/* We must pass the 'name' prop for the initials to work */}
+              <Avatar src={user.avatar} name={user.name} alt={user.name} />
+              
+              <span className="navbar__username">{user.name}</span>
             </Link>
-            <button onClick={logout}>Logout</button>
+            <button onClick={logout} className="navbar__logout" id="logoutBtn">Logout</button>
           </>
         ) : (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Sign Up</Link>
+            <Link to="/login" className="navbar__login" id="loginLink">Login</Link>
+            <Link to="/register" className="navbar__register" id="registerLink">Sign Up</Link>
           </>
         )}
       </div>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-// This component is a pop-up modal for editing a post
 const EditPostModal = ({ post, onSave, onClose }) => {
   const [text, setText] = useState(post.text);
 
@@ -10,23 +9,20 @@ const EditPostModal = ({ post, onSave, onClose }) => {
     }
   };
 
+  // Animation: smooth fade-in
   return (
-    // The backdrop darkens the screen and closes the modal on click
     <div className="modal-backdrop" onClick={onClose}>
-      {/* This stops the modal from closing when you click inside it */}
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2>Edit Post</h2>
+      <div className="edit-modal" onClick={e => e.stopPropagation()}>
+        <h3>Edit Post</h3>
         <textarea
+          className="edit-textarea"
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={e => setText(e.target.value)}
+          rows={4}
         />
-        <div className="modal-actions">
-          <button onClick={onClose} className="modal-btn-cancel">
-            Cancel
-          </button>
-          <button onClick={handleSave} className="modal-btn-save">
-            Save
-          </button>
+        <div className="edit-actions">
+          <button onClick={handleSave} className="save-btn">Save</button>
+          <button onClick={onClose} className="cancel-btn">Cancel</button>
         </div>
       </div>
     </div>
