@@ -2,40 +2,43 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Avatar from './Avatar';
 
+// Your requested emoji icon for "Like"
 const LikeIcon = ({ liked }) => (
   <span style={{ color: liked ? '#0073b1' : '#aaa', transition: 'color 0.15s' }}>
     👍
   </span>
 );
 
+// Your requested emoji icon for "Comment"
 const CommentIcon = () => (
   <span style={{ color: "#0073b1", transition: 'color 0.15s' }}>
     💬
   </span>
 );
 
-// Updated Comment component to use new CSS classes
+// A single comment component
 const Comment = ({ comment }) => (
   <div className="post-comment">
-    <Avatar name={comment.user.name} className="comment-avatar" />
-    <div className="comment-body">
-      <span className="comment-author">{comment.user.name}</span>
-      <p>{comment.text}</p>
-    </div>
+    {/* Check if comment.user exists, as populate might not have run on old posts */}
+    <strong>{comment.user ? comment.user.name : 'User'}:</strong> {comment.text}
   </div>
 );
 
-// Added 'apiUrl' to the props
-const PostItem = ({ apiUrl, post, user, onLike, onComment, onEdit, onDelete }) => {
+// This is the final PostItem component
+// Notice it no longer needs the 'apiUrl' prop for images
+const PostItem = ({ post, user, onLike, onComment, onEdit, onDelete }) => {
   const [commentText, setCommentText] = useState('');
-  const [showComments, setShowComments] = useState(false); // State for toggle
+  const [showComments, setShowComments] = useState(false); // For toggling
   const liked = post.likes.includes(user?._id);
+  const isOwner = user?._id === post.user._id;
 
+  // Animation: Fade-in effect on mount (from your previous code)
   const [show, setShow] = useState(false);
   React.useEffect(() => {
     setShow(true);
   }, []);
 
+  // Handle comment submission
   const handleCommentSubmit = (e) => {
     e.preventDefault();
     if (commentText.trim()) {
@@ -52,7 +55,8 @@ const PostItem = ({ apiUrl, post, user, onLike, onComment, onEdit, onDelete }) =
           <Link to={`/profile/${post.user._id}`} className="post-username">{post.user.name}</Link>
           <span className="post-date">{new Date(post.createdAt).toLocaleString()}</span>
         </div>
-        {user?._id === post.user._id && (
+        {/* Show Edit/Delete buttons only for the post owner */}
+        {isOwner && (
           <div className="post-settings">
             <button className="post-edit" onClick={onEdit}>Edit</button>
             <button className="post-delete" onClick={onDelete}>Delete</button>
@@ -60,23 +64,20 @@ const PostItem = ({ apiUrl, post, user, onLike, onComment, onEdit, onDelete }) =
         )}
       </div>
 
-      {/* --- UPDATED POST CONTENT SECTION --- */}
-      <div className="post-content">
-        {post.text && <p>{post.text}</p>}
-        
-        {/* This is the new part to show the image */}
-        {post.imageUrl && (
-          <div className="post-image-container">
-            <img 
-              src={`${apiUrl}${post.imageUrl}`} 
-              alt="Post content" 
-              className="post-image" 
-            />
-          </div>
-        )}
-      </div>
-      {/* --- END UPDATED SECTION --- */}
+      {/* Show text content if it exists */}
+      {post.text && <div className="post-content">{post.text}</div>}
 
+      {/* --- CLOUDINARY IMAGE FIX --- */}
+      {/* Show image content if it exists */}
+      {post.imageUrl && (
+        <div className="post-image-container">
+          {/* The 'src' is now post.imageUrl directly from Cloudinary */}
+          <img src={post.imageUrl} alt="Post" className="post-image" />
+        </div>
+      )}
+      {/* --- END FIX --- */}
+
+      {/* Show stats if there are any likes or comments */}
       {(post.likes.length > 0 || post.comments.length > 0) && (
         <div className="post-stats">
           <span className="post-likes">{post.likes.length} Likes</span>
@@ -84,6 +85,7 @@ const PostItem = ({ apiUrl, post, user, onLike, onComment, onEdit, onDelete }) =
         </div>
       )}
 
+      {/* Action Buttons */}
       <div className="post-actions">
         <button className={`like-btn ${liked ? 'liked' : ''}`} onClick={onLike}>
           <LikeIcon liked={liked} /> Like
@@ -94,11 +96,11 @@ const PostItem = ({ apiUrl, post, user, onLike, onComment, onEdit, onDelete }) =
         </button>
       </div>
 
-      {/* --- NEW: Comment section is now conditional --- */}
+      {/* --- COMMENT TOGGLE SECTION --- */}
+      {/* This whole section only appears if showComments is true */}
       {showComments && (
         <div className="comment-section">
           <form className="comment-form" onSubmit={handleCommentSubmit}>
-            <Avatar name={user.name} className="comment-avatar" />
             <input
               className="comment-input"
               value={commentText}
@@ -108,12 +110,13 @@ const PostItem = ({ apiUrl, post, user, onLike, onComment, onEdit, onDelete }) =
             <button type="submit" className="submit-comment">Send</button>
           </form>
           <div className="comments-list">
-            {post.comments.map((comment) => (
-              <Comment key={comment._id} comment={comment} />
+            {post.comments.map((comment, idx) => (
+              <Comment key={idx} comment={comment} />
             ))}
           </div>
         </div>
       )}
+      {/* --- END TOGGLE SECTION --- */}
     </div>
   );
 };
