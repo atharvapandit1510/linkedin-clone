@@ -29,39 +29,3 @@ File Handling: multer
 
 Auth: JWT, bcryptjs
 
-How to Run Locally
-
-1. Backend (Server)
-
-# Clone the main project
-git clone [https://github.com/atharvapandit1510/linkedin-clone.git]
-cd YOUR_REPO_NAME/server
-
-# Install dependencies
-npm install
-
-# Create a .env file with your MONGO_URI and JWT_SECRET
-# Get MONGO_URI from MongoDB Atlas
-# (Remember to allow 0.0.0.0/0 IP access in Atlas)
-cp .env.example .env 
-
-# Create the uploads folder
-mkdir uploads
-
-# Start the server
-node server.js
-# Server runs on http://localhost:5000
-
-
-2. Frontend (Client)
-
-# Open a new terminal
-cd ../client
-
-# Install dependencies
-npm install
-
-# Start the client
-npm start
-# Client runs on http://localhost:3000
-
