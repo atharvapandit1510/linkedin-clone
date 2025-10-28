@@ -2,18 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path'); // <-- ADD THIS LINE
-
+const path = require('path'); 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// --- THIS IS THE FIX ---
-// Tell Express to serve static files from the 'uploads' directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// --- END FIX ---
+// --- Deployment Fix ---
+// Serve static files (like your uploaded images) from the 'uploads' folder
+// We use path.resolve to create an absolute path, which Render needs
+app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
