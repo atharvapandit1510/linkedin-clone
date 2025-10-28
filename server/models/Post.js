@@ -1,11 +1,9 @@
-// CORRECT version of models/Post.js
-
 const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // <-- Using the string 'User' is the key. Mongoose handles the link.
+    ref: 'User',
     required: true
   },
   text: {
@@ -15,7 +13,26 @@ const PostSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  // --- NEW FEATURES ---
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
+  comments: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      name: { type: String, required: true }, // Store name for easy display
+      text: { type: String, required: true },
+      createdAt: { type: Date, default: Date.now }
+    }
+  ]
+  // --- END NEW FEATURES ---
 });
 
 module.exports = mongoose.model('Post', PostSchema);

@@ -1,45 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import CreatePost from '../components/CreatePost';
+import Feed from '../components/Feed'; // Import the new Feed component
 
-const HomePage = ({ apiUrl }) => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchPosts = async () => {
-    try {
-      const res = await axios.get(`${apiUrl}/api/posts`);
-      setPosts(res.data);
-    } catch (err) {
-      console.error('Error fetching posts', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, [apiUrl]);
-
+// HomePage now just sets up the main feed
+const HomePage = ({ apiUrl, user }) => {
   return (
     <div>
-      <CreatePost apiUrl={apiUrl} onPostCreated={fetchPosts} />
-      
-      <div className="feed">
-        {loading ? <p>Loading posts...</p> : posts.map(post => (
-          <div key={post._id} className="post">
-            <div className="post-header">
-              <div className="post-author-info">
-                <span className="post-author">{post.user.name}</span>
-                <span className="post-time">{new Date(post.createdAt).toLocaleString()}</span>
-              </div>
-            </div>
-            <p className="post-text">{post.text}</p>
-          </div>
-        ))}
-      </div>
+      {/* Pass the main "all posts" URL to the Feed.
+        Nest CreatePost inside. The Feed component will
+        automatically connect them.
+      */}
+      <Feed
+        apiUrl={apiUrl}
+        user={user}
+        fetchUrl={`${apiUrl}/api/posts`}
+      >
+        <CreatePost apiUrl={apiUrl} user={user} />
+      </Feed>
     </div>
   );
 };
 
 export default HomePage;
+

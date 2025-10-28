@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import setAuthToken from '../utils/setAuthToken';
 
-const RegisterPage = ({ apiUrl, setIsAuthenticated }) => {
+// Get setUser to update the user in App.js state on register
+const RegisterPage = ({ apiUrl, setIsAuthenticated, setUser }) => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const navigate = useNavigate();
 
@@ -15,11 +16,16 @@ const RegisterPage = ({ apiUrl, setIsAuthenticated }) => {
       const res = await axios.post(`${apiUrl}/api/auth/register`, formData);
       localStorage.setItem('token', res.data.token);
       setAuthToken(res.data.token);
+
+      // After registering, get the user data
+      const userRes = await axios.get(`${apiUrl}/api/auth`);
+      setUser(userRes.data); // Set user in App.js
+
       setIsAuthenticated(true);
       navigate('/');
     } catch (err) {
       console.error(err.response.data);
-      alert('Registration Failed: ' + err.response.data.msg);
+      alert('Registration Failed: ' + (err.response.data.msg || 'Server Error'));
     }
   };
 
@@ -29,10 +35,11 @@ const RegisterPage = ({ apiUrl, setIsAuthenticated }) => {
       <form onSubmit={onSubmit} className="auth-form">
         <input type="text" name="name" placeholder="Name" onChange={onChange} required />
         <input type="email" name="email" placeholder="Email" onChange={onChange} required />
-        <input type="password" name="password" placeholder="Password" minLength="6" onChange={onChange} required />
+        <input type="password" name="password" placeholder="Password (6+ characters)" minLength="6" onChange={onChange} required />
         <button type="submit">Register</button>
       </form>
     </div>
   );
 };
+
 export default RegisterPage;

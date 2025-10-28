@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import setAuthToken from '../utils/setAuthToken';
 
-const LoginPage = ({ apiUrl, setIsAuthenticated }) => {
+// Get setUser to update the user in App.js state on login
+const LoginPage = ({ apiUrl, setIsAuthenticated, setUser }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
 
@@ -13,13 +14,18 @@ const LoginPage = ({ apiUrl, setIsAuthenticated }) => {
     e.preventDefault();
     try {
       const res = await axios.post(`${apiUrl}/api/auth/login`, formData);
-      localStorage.setItem('token', res.data.token); // Store token
-      setAuthToken(res.data.token); // Set token in headers
+      localStorage.setItem('token', res.data.token);
+      setAuthToken(res.data.token);
+
+      // After logging in, get the user data
+      const userRes = await axios.get(`${apiUrl}/api/auth`);
+      setUser(userRes.data); // Set user in App.js
+      
       setIsAuthenticated(true);
-      navigate('/'); // Redirect to home
+      navigate('/');
     } catch (err) {
       console.error(err.response.data);
-      alert('Login Failed: ' + err.response.data.msg);
+      alert('Login Failed: ' + (err.response.data.msg || 'Server Error'));
     }
   };
 
@@ -34,4 +40,5 @@ const LoginPage = ({ apiUrl, setIsAuthenticated }) => {
     </div>
   );
 };
+
 export default LoginPage;
