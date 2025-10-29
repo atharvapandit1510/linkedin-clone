@@ -11,6 +11,7 @@ import axios from 'axios';
 // This is your DEPLOYED backend URL.
 // For local testing, use: 'http://localhost:5000'
 const API_URL = 'https://linkedin-clone-backend-yeai.onrender.com'; // <-- CHANGE THIS LATER
+//const API_URL = 'http://localhost:5000';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
